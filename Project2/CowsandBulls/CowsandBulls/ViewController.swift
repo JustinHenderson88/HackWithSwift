@@ -17,14 +17,40 @@ class ViewController: NSViewController, NSTableViewDataSource ,NSTableViewDelega
         super.viewDidLoad()
         startNewGame()
 
-        // Do any additional setup after loading the view.
+        // do any additional setup after loading the view.
     }
 
+    //Submit Guess
     @IBAction func submitGuess(_ sender: Any) {
+        // check for 4 unique characters
+        let guessString = guess.stringValue
+        guard Set(guessString).count == 4 else {return}
+        guard guessString.count == 4 else {return}
+        
+        // ensure there are no non-digit characters
+        let badCharacters = CharacterSet(charactersIn: "0123456789").inverted
+        guard guessString.rangeOfCharacter(from: badCharacters) == nil else {return}
+        
+        //add the guess array and the table view
+        guesses.insert(guessString, at: 0)
+        tableView.insertRows(at: IndexSet(integer: 0), withAnimation: .slideDown)
+        
+        //did the player win?
+        let resultString = result(for: guessString)
+        
+        if resultString.contains("4b") {
+            let alert = NSAlert()
+            alert.messageText = "You did it, you win!"
+            alert.informativeText = "Congratulation, click OK to play again."
+            
+            alert.runModal()
+            
+            startNewGame()
+        }
     }
     override var representedObject: Any? {
         didSet {
-        // Update the view, if already loaded.
+        // update the view, if already loaded.
         }
     }
 
